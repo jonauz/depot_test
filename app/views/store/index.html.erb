@@ -13,8 +13,36 @@
         <%= sanitize(product.description) %>
         <div class="price_line">
           <span class="price"><%= number_to_currency(product.price, { unit: '' }) %></span>
+          <%= button_to 'Add to Cart', line_items_path(product_id: product), remote: true %>
         </div>
       </div>
     <% end %>
   <% end %>
 <% end %>
+
+<% if session[:counter] > 3 %>
+  <span>You visited this page <%= pluralize(session[:counter], 'time', 'times') %>.</span>
+<% end %>
+
+<%= link_to 'Go to Cart', cart_path(session[:cart_id]) %>
+
+<%
+Cart.all.each do |cart|
+  # count the number of each product in the cart
+  sums = cart.line_items.group(:product_id).sum(:quantity)
+  sums.inspect
+  puts '<<--- JOSI --->>' + sums.to_s
+
+  # sums.each do |product_id, quantity|
+  #   if quantity > 1
+  #     # remove individual items
+  #     # cart.line_items.where(product_id: product_id).delete_all
+
+  #     # replace with a sinle item
+  #     # item = cart.line_items.build(product_id: product_id)
+  #     # item.quantity = quantity
+  #     # item.save!
+  #   end
+  # end
+end
+%>
